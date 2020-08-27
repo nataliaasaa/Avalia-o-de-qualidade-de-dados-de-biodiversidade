@@ -16,7 +16,21 @@ class QualidadeDados:
             self.listdata()
         coluna1 = [str(linha[15]) for linha in self.data]
         print (coluna1)
+   
+    def filtros(self):
+        if self.data is None:
+            self.listdata()
+        coluna3 = [str(linha[26]) for linha in self.data]
+        #CRIAR UM DICIONARIO COM A SIGLA E O NUMERO DE OCORRENCIA E AI ENVONTRAR O NUMERO DIGITANDO A SIGLA
+        #estado = input("Digite a sigla do estado em maiúsculo: ")
+        ocor = [coluna3.count(a) for a in coluna3]
+        dic_ocor = dict(zip(coluna3, ocor))
+        #print (coluna3)
+        sigla = input("Digite uma sigla maiúscula: ")
+        print(dic_ocor)
+        print(dic_ocor[sigla])         
 
 obj = QualidadeDados()
 obj.listdata()
-obj.nivelTaxonomico()
+#obj.nivelTaxonomico()
+obj.filtros()
