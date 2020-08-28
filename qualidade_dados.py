@@ -13,20 +13,7 @@ class QualidadeDados:
         self.data = [[campo for campo in linha.split(';')] for linha in self.file.read().split('\n')[1:-1]]
         #print (self.data)
         self.file.close()
-
-    def filtros(self):
-        if self.data is None:
-            self.listdata()
-        coluna3 = [str(linha[26]) for linha in self.data]
-        #CRIAR UM DICIONARIO COM A SIGLA E O NUMERO DE OCORRENCIA E AI ENVONTRAR O NUMERO DIGITANDO A SIGLA
-        #estado = input("Digite a sigla do estado em maiúsculo: ")
-        ocor = [coluna3.count(a) for a in coluna3]
-        dic_ocor = dict(zip(coluna3, ocor))
-        #print (coluna3)
-        sigla = input("Digite uma sigla maiúscula: ")
-        print(dic_ocor)
-        print(dic_ocor[sigla])         
-
+   
     def nivelTaxonomico(self): #verifica até qual nivel taxonomico a ocorrência foi identificada (0 a 6) 
         if self.data is None:
             self.listdata()
@@ -39,6 +26,28 @@ class QualidadeDados:
                 else:
                     count += 1
             print ("Nivel taxonômico da ocorrência : ", count)
+   
+    def filtros(self): #CRIAR UM DICIONARIO COM A SIGLA E O NUMERO DE OCORRENCIA E AI ENVONTRAR O NUMERO DIGITANDO A SIGLA
+        if self.data is None:
+            self.listdata()
+        #FILTRO ESTADOS
+        estados = [str(linha[26]) for linha in self.data] #coluna dos estados   
+        ocor = [estados.count(a) for a in estados] #coluna da ocorrencia
+        dic_ocor = dict(zip(estados, ocor)) #dicionario 
+        sigla = input("Digite uma sigla maiúscula: ") #ver questao da letra maiuscula e minuscula
+        sigla = sigla.upper()
+        print(dic_ocor[sigla]) 
+        #FILTRO ESPECIE - CATEGORA de AMEAÇA
+        especie = [str(linha[21]) for linha in self.data] #coluna das especies trans em linha
+        especie = especie[0]
+        categoria = [str(linha[23]) for linha in self.data] #coluna das especies trans em linha
+        categoria = categoria[0]
+        nome = input("Digite especie: ")
+        if nome in especie:
+            print(categoria) 
+        else:
+            print("Nome da especie esta escrita errada")         
+
 
     def verificarCoordenadas(self): #Verifica se as coordenadas da ocorrência correspondem ao estado indicado. 
         if self.data is None:
