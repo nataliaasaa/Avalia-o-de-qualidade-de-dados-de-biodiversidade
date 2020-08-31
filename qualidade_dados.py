@@ -9,11 +9,75 @@ class QualidadeDados:
     def __init__(self):
         self.file = open("portalbio_export_28-08-2020-15-23-53.csv", "r")
         self.data = None
+        #Cria uma lista com elementos separados por virgula
+        self.dataList = self.file.readlines()
+        #Cria uma lista de listas
+        self.dataLines = [l.rstrip().split(";") for l in self.dataList]
+        #Cria uma lista contendo somente o cabeçalho do arquivo
+        self.headLista = self.dataLines[0]  #Lista com os atributos da Head do arquivo
+        #Cria uma lista com os dicionários, cada um representando uma linha do arquivo 
+        self.dataDictList = []
+
 
     def listdata(self):
         self.data = [[campo for campo in linha.split(';')] for linha in self.file.read().split('\n')[1:-1]]
         #print (self.data)
         self.file.close()
+        
+    #Retorna a representação do objeto, sendo chamada com 'print(objeto)'
+    def __str__(self):
+        print('Dados em lista: ' + str(type(self.dataLines)))
+        return 'Representação dos dados nas classes'
+
+
+    #Tranformar dados em uma lista com dicionários:
+    def transformToDictList(self):
+
+        if len(self.dataDictList) == 0:
+
+            #print(self.dataLines[:1])
+            #print("\n")
+
+            #linha = objeto
+            for linha in self.dataLines[1:]:
+                dataDict = {}
+                #Montar um único dicionário por linha
+                for i, key in enumerate(self.headLista):
+                #for (i=0, i++, i < len(headLista))
+                    #key = headLista[i] 
+                    dataDict[key] = linha[i]
+                    
+                self.dataDictList.append(dataDict)
+
+        return (self.dataDictList)
+    
+
+    #Identificar a quantidade de linhas com dados faltantes para cada coluna, e fazer a média desses dados:
+
+    def dadosFaltantesPorColuna(self):
+        
+        totalPorColuna = len(self.dataDictList)
+        dictFaltantes = {} 
+
+        for coluna in self.headLista:
+
+            count = len([item for item in self.dataDictList if item[coluna] == "Sem Informações"])
+            #print(coluna, count)
+            #print(len(self.dataDictList))
+            dictFaltantes[coluna] = count
+
+        #Dicionários dos items faltantes em cada coluna:
+        #print(dictFaltantes)    
+        
+        #Soma todos os valores de items faltantes nas colunas(dictFaltantes.values()): 
+        somaItensFalantesPorColuna = sum(dictFaltantes.values())
+        #print("A soma dos itens faltantes: " + str(somaItensFalantesPorColuna))
+
+        #somaItensFalantesPorColuna / dividir por len(self.headLista):
+        mediaItensFalantesPorColuna = somaItensFalantesPorColuna / len(self.headLista)
+        print("A médoa dos itens faltantes por coluna: " + str(mediaItensFalantesPorColuna))
+
+        return(dictFaltantes)    
 
     def nivelTaxonomico(self): #verifica até qual nivel taxonomico a ocorrência foi identificada (0 a 6).
         if self.data is None:
@@ -71,6 +135,9 @@ class QualidadeDados:
 
 obj = QualidadeDados()
 obj.listdata()
-obj.filtros()
+#print(obj.transformToDictList())
+#print("\n")
+#print(obj.dadosFaltantesPorColuna())
 #obj.nivelTaxonomico()
+#obj.filtros()
 #obj.verificarCoordenadas()
