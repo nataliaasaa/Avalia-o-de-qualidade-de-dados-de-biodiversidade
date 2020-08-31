@@ -1,7 +1,8 @@
 from opencage.geocoder import OpenCageGeocode
 from opencage.geocoder import InvalidInputError, RateLimitExceededError, UnknownError
 from pprint import pprint
-key = '567331141def4c669c7b0b0ba8342942'
+
+key = '5b7a26bfcd904e07a49f085037f6d7ba'
 geocoder = OpenCageGeocode(key)
 
 class QualidadeDados:
@@ -10,45 +11,45 @@ class QualidadeDados:
         self.file = open("portalbio_export_27-08-2020-14-01-51.csv", "r")
         self.data = None
         #Cria uma lista com elementos separados por virgula
-        #self.dataList = self.file.readlines()
-        #Cria uma lista de listas
-        #self.dataLines = [l.rstrip().split(";") for l in self.dataList]
-        #Cria uma lista contendo somente o cabeçalho do arquivo
-        #self.headLista = self.dataLines[0]  #Lista com os atributos da Head do arquivo
-        #Cria uma lista com os dicionários, cada um representando uma linha do arquivo 
-        #self.dataDictList = []
 
+        self.dataList = self.criarLista()
+
+        #Cria uma lista de listas
+        self.dataLines = [l.rstrip().split(";") for l in self.dataList]
+        #Cria uma lista contendo somente o cabeçalho do arquivo
+        self.headLista = self.dataLines[0]  #Lista com os atributos da Head do arquivo
+        #Cria uma lista com os dicionários, cada um representando uma linha do arquivo 
+        self.dataDictList = []
 
     def listdata(self):
         self.data = [[campo for campo in linha.split(';')] for linha in self.file.read().split('\n')[1:-1]]
         #print (self.data)
         self.file.close()
-        
+
     #Retorna a representação do objeto, sendo chamada com 'print(objeto)'
     def __str__(self):
         print('Dados em lista: ' + str(type(self.dataLines)))
         return 'Representação dos dados nas classes'
 
+    #Método que cria uma lista com items separados por virgula
+    def criarLista(self):
+        with open("portalbio_export_27-08-2020-14-01-51.csv", "r") as file:
+            dataList = file.readlines()
+            return dataList
 
     #Tranformar dados em uma lista com dicionários:
     def transformToDictList(self):
 
         if len(self.dataDictList) == 0:
 
-            #print(self.dataLines[:1])
-            #print("\n")
-
             #linha = objeto
             for linha in self.dataLines[1:]:
                 dataDict = {}
                 #Montar um único dicionário por linha
                 for i, key in enumerate(self.headLista):
-                #for (i=0, i++, i < len(headLista))
-                    #key = headLista[i] 
                     dataDict[key] = linha[i]
                     
                 self.dataDictList.append(dataDict)
-
         return (self.dataDictList)
     
 
@@ -56,7 +57,6 @@ class QualidadeDados:
 
     def dadosFaltantesPorColuna(self):
         
-        totalPorColuna = len(self.dataDictList)
         dictFaltantes = {} 
 
         for coluna in self.headLista:
@@ -75,23 +75,25 @@ class QualidadeDados:
 
         #somaItensFalantesPorColuna / dividir por len(self.headLista):
         mediaItensFalantesPorColuna = somaItensFalantesPorColuna / len(self.headLista)
-        print("A médoa dos itens faltantes por coluna: " + str(mediaItensFalantesPorColuna))
+        #print("A médoa dos itens faltantes por coluna: " + str(mediaItensFalantesPorColuna))
 
-        return(dictFaltantes)    
+        return(mediaItensFalantesPorColuna)    
 
     def nivelTaxonomico(self): #verifica até qual nivel taxonomico a ocorrência foi identificada (0 a 6).
         if self.data is None:
             self.listdata()
-
+        num = 0
         for linha in self.data:
             count = 0
+            num += 1
             for i in linha[15:21]:
                 if i == 'Sem Informações':
                     count = 0
                 else:
                     count += 1
-            print ("Nivel taxonômico da ocorrência : ", count)
+            print ("Nivel taxonômico da ocorrência", num+1, ": ", count)
    
+
     def filtros_estados(self): #CRIAR UM DICIONARIO COM A SIGLA E O NUMERO DE OCORRENCIA E AI ENVONTRAR O NUMERO DIGITANDO A SIGLA
         if self.data is None:
             self.listdata()
@@ -103,6 +105,8 @@ class QualidadeDados:
         sigla = sigla.upper()
         print(dic_ocor[sigla]) 
     def filtros_especie(self):
+        if self.data is None:
+          self.listdata()
         #FILTRO ESPECIE - CATEGORA de AMEAÇA
         especie = [str(linha[21]) for linha in self.data] #coluna das especies trans em linha
         especie_prim = [str.split(linha[21])[0] for linha in self.data]#coluna do primeiro nome das especies trans em linha
@@ -119,8 +123,14 @@ class QualidadeDados:
         elif nome in dic_cat_seg:
             print(dic_cat_seg[nome])
         else:
-            print("Nome inexistente")         
+            print("Nome inexistente")        
 
+    def numTotalIndividuos(self):
+        if self.data is None:
+            self.listdata()
+        
+        individuos = [int(linha[14]) for linha in self.data]
+        print ("Número total de indivíduos no arquivo: ", sum(individuos))
 
     def verificarCoordenadas(self): #Verifica se as coordenadas da ocorrência correspondem ao estado indicado. 
         if self.data is None:
@@ -141,11 +151,13 @@ class QualidadeDados:
             except RateLimitExceededError as ex:
                 print(ex)      
 
+
 obj = QualidadeDados()
 obj.listdata()
-#print(obj.transformToDictList())
-#print("\n")
-#print(obj.dadosFaltantesPorColuna())
-#obj.nivelTaxonomico()
-obj.filtros_especie()
+obj.transformToDictList()
+print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
+obj.nivelTaxonomico()
+#obj.filtros_estados()
+#obj.filtros_especie()
 #obj.verificarCoordenadas()
+#obj.numTotalIndividuos()
