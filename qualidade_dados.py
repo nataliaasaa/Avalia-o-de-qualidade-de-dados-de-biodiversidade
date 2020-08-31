@@ -141,9 +141,9 @@ class QualidadeDados:
 
 obj = QualidadeDados()
 obj.listdata()
-obj.transformToDictList()
-print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
-obj.nivelTaxonomico()
+#obj.transformToDictList()
+#print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
+#obj.nivelTaxonomico()
 #obj.filtros()
-#obj.verificarCoordenadas()
+obj.verificarCoordenadas()
 #obj.numTotalIndividuos()
