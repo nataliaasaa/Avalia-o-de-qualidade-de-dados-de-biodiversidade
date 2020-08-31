@@ -143,7 +143,7 @@ class QualidadeDados:
         count = 0
         for linha in self.data:
             try:
-                results = geocoder.reverse_geocode(float(linha[29]), float(linha[30]), language='pt')
+                results = geocoder.reverse_geocode(float(linha[29]), float(linha[30]), no_annotations = '1', language='pt')
                 if results and len(results):
                     count += 1
                     coord = (results[0]['components']['state_code'])
