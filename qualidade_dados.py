@@ -11,7 +11,9 @@ class QualidadeDados:
         self.file = open("portalbio_export_27-08-2020-14-01-51.csv", "r")
         self.data = None
         #Cria uma lista com elementos separados por virgula
+
         self.dataList = self.criarLista()
+
         #Cria uma lista de listas
         self.dataLines = [l.rstrip().split(";") for l in self.dataList]
         #Cria uma lista contendo somente o cabeçalho do arquivo
@@ -91,26 +93,38 @@ class QualidadeDados:
                     count += 1
             print ("Nivel taxonômico da ocorrência", num+1, ": ", count)
    
-    def filtros(self): #CRIAR UM DICIONARIO COM A SIGLA E O NUMERO DE OCORRENCIA E AI ENCONTRAR O NUMERO DIGITANDO A SIGLA
+
+    def filtros_estados(self): #CRIAR UM DICIONARIO COM A SIGLA E O NUMERO DE OCORRENCIA E AI ENVONTRAR O NUMERO DIGITANDO A SIGLA
         if self.data is None:
             self.listdata()
         #FILTRO ESTADOS
         estados = [str(linha[26]) for linha in self.data] #coluna dos estados   
         ocor = [estados.count(a) for a in estados] #coluna da ocorrencia
         dic_ocor = dict(zip(estados, ocor)) #dicionario 
-        sigla = input("Digite uma sigla maiúscula: ") #ver questao da letra maiuscula e minuscula
+        sigla = input("Digite uma sigla maiúscula: ") 
         sigla = sigla.upper()
         print(dic_ocor[sigla]) 
+    
+    def filtros_especie(self):
+        if self.data is None:
+          self.listdata()
         #FILTRO ESPECIE - CATEGORA de AMEAÇA
         especie = [str(linha[21]) for linha in self.data] #coluna das especies trans em linha
-        especie = especie[0]
-        categoria = [str(linha[23]) for linha in self.data] #coluna das especies trans em linha
-        categoria = categoria[0]
+        especie_prim = [str.split(linha[21])[0] for linha in self.data]#coluna do primeiro nome das especies trans em linha
+        especie_seg = [str.split(linha[21])[1] for linha in self.data]#coluna do segundo nome das especies trans em linha
+        categoria = [str(linha[23]) for linha in self.data] #coluna das categorias de ameaça trans em linha
+        dic_cat = dict(zip(especie, categoria)) #dicionario
+        dic_cat_prim = dict(zip(especie_prim, categoria)) #dicionario
+        dic_cat_seg = dict(zip(especie_seg, categoria)) #dicionario
         nome = input("Digite especie: ")
-        if nome in especie:
-            print(categoria) 
+        if nome in dic_cat:
+            print(dic_cat[nome]) 
+        elif nome in dic_cat_prim:
+            print(dic_cat_prim[nome])
+        elif nome in dic_cat_seg:
+            print(dic_cat_seg[nome])
         else:
-            print("Nome da especie esta escrita errada") 
+            print("Nome inexistente")        
 
     def numTotalIndividuos(self):
         if self.data is None:
@@ -141,9 +155,10 @@ class QualidadeDados:
 
 obj = QualidadeDados()
 obj.listdata()
-#obj.transformToDictList()
-#print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
+obj.transformToDictList()
+print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
 #obj.nivelTaxonomico()
-#obj.filtros()
-obj.verificarCoordenadas()
+#obj.filtros_estados()
+#obj.filtros_especie()
+#obj.verificarCoordenadas()
 #obj.numTotalIndividuos()
