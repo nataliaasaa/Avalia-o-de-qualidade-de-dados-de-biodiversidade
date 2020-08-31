@@ -7,10 +7,10 @@ geocoder = OpenCageGeocode(key)
 class QualidadeDados:
 
     def __init__(self):
-        self.file = open("portalbio_export_28-08-2020-15-23-53.csv", "r")
+        self.file = open("portalbio_export_27-08-2020-14-01-51.csv", "r")
         self.data = None
         #Cria uma lista com elementos separados por virgula
-        self.dataList = self.file.readlines()
+        self.dataList = self.criarLista()
         #Cria uma lista de listas
         self.dataLines = [l.rstrip().split(";") for l in self.dataList]
         #Cria uma lista contendo somente o cabeçalho do arquivo
@@ -18,37 +18,35 @@ class QualidadeDados:
         #Cria uma lista com os dicionários, cada um representando uma linha do arquivo 
         self.dataDictList = []
 
-
     def listdata(self):
         self.data = [[campo for campo in linha.split(';')] for linha in self.file.read().split('\n')[1:-1]]
         #print (self.data)
         self.file.close()
-        
+
     #Retorna a representação do objeto, sendo chamada com 'print(objeto)'
     def __str__(self):
         print('Dados em lista: ' + str(type(self.dataLines)))
         return 'Representação dos dados nas classes'
 
+    #Método que cria uma lista com items separados por virgula
+    def criarLista(self):
+        with open("portalbio_export_27-08-2020-14-01-51.csv", "r") as file:
+            dataList = file.readlines()
+            return dataList
 
     #Tranformar dados em uma lista com dicionários:
     def transformToDictList(self):
 
         if len(self.dataDictList) == 0:
 
-            #print(self.dataLines[:1])
-            #print("\n")
-
             #linha = objeto
             for linha in self.dataLines[1:]:
                 dataDict = {}
                 #Montar um único dicionário por linha
                 for i, key in enumerate(self.headLista):
-                #for (i=0, i++, i < len(headLista))
-                    #key = headLista[i] 
                     dataDict[key] = linha[i]
                     
                 self.dataDictList.append(dataDict)
-
         return (self.dataDictList)
     
 
@@ -56,7 +54,6 @@ class QualidadeDados:
 
     def dadosFaltantesPorColuna(self):
         
-        totalPorColuna = len(self.dataDictList)
         dictFaltantes = {} 
 
         for coluna in self.headLista:
@@ -75,9 +72,9 @@ class QualidadeDados:
 
         #somaItensFalantesPorColuna / dividir por len(self.headLista):
         mediaItensFalantesPorColuna = somaItensFalantesPorColuna / len(self.headLista)
-        print("A médoa dos itens faltantes por coluna: " + str(mediaItensFalantesPorColuna))
+        #print("A médoa dos itens faltantes por coluna: " + str(mediaItensFalantesPorColuna))
 
-        return(dictFaltantes)    
+        return(mediaItensFalantesPorColuna)    
 
     def nivelTaxonomico(self): #verifica até qual nivel taxonomico a ocorrência foi identificada (0 a 6).
         if self.data is None:
@@ -135,9 +132,8 @@ class QualidadeDados:
 
 obj = QualidadeDados()
 obj.listdata()
-#print(obj.transformToDictList())
-#print("\n")
-#print(obj.dadosFaltantesPorColuna())
-#obj.nivelTaxonomico()
+obj.transformToDictList()
+print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
+obj.nivelTaxonomico()
 #obj.filtros()
-#obj.verificarCoordenadas()
+obj.verificarCoordenadas()
