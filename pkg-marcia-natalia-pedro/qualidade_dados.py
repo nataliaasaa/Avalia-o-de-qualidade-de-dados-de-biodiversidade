@@ -8,7 +8,8 @@ geocoder = OpenCageGeocode(key)
 class QualidadeDados:
 
     def __init__(self):
-        self.file = open("portalbio_export_27-08-2020-14-01-51.csv", "r")
+        self.path = input("Digite o caminho do arquivo: ")
+        self.file = open(self.path, "r")
         self.data = None
         #Cria uma lista com elementos separados por virgula
 
@@ -33,7 +34,7 @@ class QualidadeDados:
 
     #Método que cria uma lista com items separados por virgula
     def criarLista(self):
-        with open("portalbio_export_27-08-2020-14-01-51.csv", "r") as file:
+        with open (self.path, "r") as file:
             dataList = file.readlines()
             return dataList
 
@@ -101,9 +102,12 @@ class QualidadeDados:
         estados = [str(linha[26]) for linha in self.data] #coluna dos estados   
         ocor = [estados.count(a) for a in estados] #coluna da ocorrencia
         dic_ocor = dict(zip(estados, ocor)) #dicionario 
-        sigla = input("Digite uma sigla maiúscula: ") 
+        sigla = input("Digite o estado desejado (sigla): ") 
         sigla = sigla.upper()
-        print(dic_ocor[sigla]) 
+        if sigla in estados:
+            print("Número de espécies em", sigla, ":", dic_ocor[sigla]) 
+        else:
+            print ("Sigla não encontrada.")
     
     def filtros_especie(self):
         if self.data is None:
@@ -126,7 +130,7 @@ class QualidadeDados:
         else:
             print("Nome inexistente")        
 
-    def numTotalIndividuos(self):
+    def numTotalIndividuos(self): #Retorna o número total de indivíduos do arquivo.
         if self.data is None:
             self.listdata()
         
@@ -146,19 +150,19 @@ class QualidadeDados:
                     #print (coord)
                     #if coord == linha[26]:
                      #   print ("A coordenada corresponde ao estado.")
-                    if coord != linha[26]:
-                        print ("A coordenada da ocorrência", count+1, "não correspode ao estado da ocorrência")
+                if coord != linha[26]:
+                    print ("A coordenada da ocorrência", count+1, "não correspode ao estado da ocorrência")
                                             
-            except RateLimitExceededError as ex:
+            except InvalidInputError as ex:
                 print(ex)      
 
 
 obj = QualidadeDados()
 obj.listdata()
-obj.transformToDictList()
-print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
+#obj.transformToDictList()
+#print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
 #obj.nivelTaxonomico()
 #obj.filtros_estados()
 #obj.filtros_especie()
-#obj.verificarCoordenadas()
+obj.verificarCoordenadas()
 #obj.numTotalIndividuos()
