@@ -9,11 +9,17 @@ class QualidadeDados:
     def __init__(self):
         self.file = open("portalbio_export_27-08-2020-14-01-51.csv", "r")
 
+        #Cria uma lista com elementos separados por virgula
         self.dataList = self.file.readlines()
+        #Cria uma lista de listas
         self.dataLines = [l.rstrip().split(";") for l in self.dataList]
+        
         #print(self.dataList)
         #print(self.dataLines)
+        
+        #Cria uma lista contendo somente o cabeçalho do arquivo
         self.headLista = self.dataLines[0]  #Lista com os atributos da Head do arquivo
+        #Cria uma lista com os dicionários, cada um representando uma linha do arquivo 
         self.dataDictList = []
 
 
@@ -42,7 +48,7 @@ class QualidadeDados:
                     
                 self.dataDictList.append(dataDict)
 
-        return self.dataDictList
+        return (self.dataDictList)
     
 
     #Identificar a quantidade de linhas com dados faltantes para cada coluna, e fazer a média desses dados:
@@ -56,77 +62,42 @@ class QualidadeDados:
 
             count = len([item for item in self.dataDictList if item[coluna] == "Sem Informações"])
             #print(coluna, count)
-            print(len(self.dataDictList))
+            #print(len(self.dataDictList))
             dictFaltantes[coluna] = count
 
-        print (dictFaltantes)    
+        #Dicionários dos items faltantes em cada coluna:
+        #print(dictFaltantes)    
         
-        #Dividir todos os valores do dictFaltantes / totalPorColuna 
+        #Soma todos os valores de items faltantes nas colunas(dictFaltantes.values()): 
         somaItensFalantesPorColuna = sum(dictFaltantes.values())
+        #print("A soma dos itens faltantes: " + str(somaItensFalantesPorColuna))
 
-        #somaItensFalantesPorColuna / dividir por len(self.headLista)
+        #somaItensFalantesPorColuna / dividir por len(self.headLista):
         mediaItensFalantesPorColuna = somaItensFalantesPorColuna / len(self.headLista)
+        print("A médoa dos itens faltantes por coluna: " + str(mediaItensFalantesPorColuna))
+
+        return(dictFaltantes)
 
 
-        return (somaItensFalantesPorColuna, mediaItensFalantesPorColuna)
-
-
-    '''   
-    #Atividade 01 - Retorna os Dados Faltantes:
-
-    def contarInformacoesFaltantes(self):
-
-        #print(self.dataLines[:1])
-        #print(self.dataLines[2])
-        #print(self.dataLines[3])
-
-        countObj = 0 #Contador de objetos da lista
-        countAtb = 0 #Contador atributos do objeto
-        contadorFaltante = 0
-        contFaltantePorColuna = [] # Implementar esta Parte
-
-        media = 0
-
-        for object in self.dataLines:
-            countObj += 1         
-
-            for atribute in object:
-                countAtb += 1
-
-                if not atribute or atribute == 'Sem Informações':                    
-                    contadorFaltante += 1    
-
-        
-        #print(countObj)
-        #print(countAtb)
-        print("A quatidade total de atributos faltantes é: " + str(contadorFaltante))
-        
-        atributosTotais = countObj * countAtb        
-        print("A quatidade de atributos é: " + str(atributosTotais))
-
-        media = contadorFaltante/atributosTotais * 100
-        print("A média de atributos faltantes é: " + str(media))
-
-        return atributosTotais, contadorFaltante
-        '''
-
+#Tests: 
 
 objeto1 = QualidadeDados()
 print(objeto1)
 print("\n")
-#print(objeto1.contarInformacoesFaltantes())
-print("")
-#print(objeto1.transformToDictList())
+
+#Mostrar a lista com os dicinários:
+print(objeto1.transformToDictList())
 print("\n")
 
 #Exibir todas as localidades :
-localidades = [item["Localidade"] for item in objeto1.transformToDictList()]
-print("localidade:\n", localidades)
+#localidades = [item["Localidade"] for item in objeto1.transformToDictList()]
+#print("localidade:\n", localidades)
 
 #Exibir todas as localidades onde a categoria de ameaça é vulnerável
-localidadesVulneraveis = [item["Localidade"] for item in objeto1.transformToDictList() if item["Categoria de Ameaca"] == "Vulnerável"]
-print("localidadeVulneraveis:\n", localidadesVulneraveis)
+#localidadesVulneraveis = [item["Localidade"] for item in objeto1.transformToDictList() if item["Categoria de Ameaca"] == "Vulnerável"]
+#print("localidadeVulneraveis:\n", localidadesVulneraveis)
 
- #Para cada coluna identique a quantidade de linhas com dados faltantes
+#Para cada coluna identique a quantidade de linhas com dados faltantes, e a média de dados faltantes por coluna
 print(objeto1.dadosFaltantesPorColuna())
+
 
