@@ -1,28 +1,29 @@
-'''
-Para cada coluna identique a quantidade de linhas com dados faltantes (em alguns casos, o dado faltante é uma string vazia, em outros casos é uma string contendo algum valor do tipo: "sem informação"). Faça um método que retorna a média de dados faltantes por coluna
-'''
+from opencage.geocoder import OpenCageGeocode
+from opencage.geocoder import InvalidInputError, RateLimitExceededError, UnknownError
+from pprint import pprint
+key = '942bc37914024732927948522464540e'
+geocoder = OpenCageGeocode(key)
 
 class QualidadeDados:
 
-       
-    # Método que implementa um objeto, e o atribui à um arquivo
     def __init__(self):
-        self.file = open("portalbio_export_27-08-2020-14-01-51.csv", "r")
-
+        self.file = open("portalbio_export_28-08-2020-15-23-53.csv", "r")
+        self.data = None
         #Cria uma lista com elementos separados por virgula
         self.dataList = self.file.readlines()
         #Cria uma lista de listas
         self.dataLines = [l.rstrip().split(";") for l in self.dataList]
-        
-        #print(self.dataList)
-        #print(self.dataLines)
-        
         #Cria uma lista contendo somente o cabeçalho do arquivo
         self.headLista = self.dataLines[0]  #Lista com os atributos da Head do arquivo
         #Cria uma lista com os dicionários, cada um representando uma linha do arquivo 
         self.dataDictList = []
 
 
+    def listdata(self):
+        self.data = [[campo for campo in linha.split(';')] for linha in self.file.read().split('\n')[1:-1]]
+        #print (self.data)
+        self.file.close()
+        
     #Retorna a representação do objeto, sendo chamada com 'print(objeto)'
     def __str__(self):
         print('Dados em lista: ' + str(type(self.dataLines)))
@@ -76,28 +77,67 @@ class QualidadeDados:
         mediaItensFalantesPorColuna = somaItensFalantesPorColuna / len(self.headLista)
         print("A médoa dos itens faltantes por coluna: " + str(mediaItensFalantesPorColuna))
 
-        return(dictFaltantes)
+        return(dictFaltantes)    
+
+    def nivelTaxonomico(self): #verifica até qual nivel taxonomico a ocorrência foi identificada (0 a 6).
+        if self.data is None:
+            self.listdata()
+
+        for linha in self.data:
+            count = 0
+            for i in linha[15:21]:
+                if i == 'Sem Informações':
+                    count = 0
+                else:
+                    count += 1
+            print ("Nivel taxonômico da ocorrência : ", count)
+   
+    def filtros(self): #CRIAR UM DICIONARIO COM A SIGLA E O NUMERO DE OCORRENCIA E AI ENVONTRAR O NUMERO DIGITANDO A SIGLA
+        if self.data is None:
+            self.listdata()
+        #FILTRO ESTADOS
+        estados = [str(linha[26]) for linha in self.data] #coluna dos estados   
+        ocor = [estados.count(a) for a in estados] #coluna da ocorrencia
+        dic_ocor = dict(zip(estados, ocor)) #dicionario 
+        sigla = input("Digite uma sigla maiúscula: ") #ver questao da letra maiuscula e minuscula
+        sigla = sigla.upper()
+        print(dic_ocor[sigla]) 
+        #FILTRO ESPECIE - CATEGORA de AMEAÇA
+        especie = [str(linha[21]) for linha in self.data] #coluna das especies trans em linha
+        especie = especie[0]
+        categoria = [str(linha[23]) for linha in self.data] #coluna das especies trans em linha
+        categoria = categoria[0]
+        nome = input("Digite especie: ")
+        if nome in especie:
+            print(categoria) 
+        else:
+            print("Nome da especie esta escrita errada")         
 
 
-#Tests: 
+    def verificarCoordenadas(self): #Verifica se as coordenadas da ocorrência correspondem ao estado indicado. 
+        if self.data is None:
+            self.listdata()
+        count = 0
+        for linha in self.data:
+            try:
+                results = geocoder.reverse_geocode(float(linha[29]), float(linha[30]), language='pt')
+                if results and len(results):
+                    count += 1
+                    coord = (results[0]['components']['state_code'])
+                    #print (coord)
+                    #if coord == linha[26]:
+                     #   print ("A coordenada corresponde ao estado.")
+                    if coord != linha[26]:
+                        print ("A coordenada da ocorrência", count+1, "não correspode ao estado da ocorrência")
+                                            
+            except RateLimitExceededError as ex:
+                print(ex)      
 
-objeto1 = QualidadeDados()
-print(objeto1)
-print("\n")
-
-#Mostrar a lista com os dicinários:
-print(objeto1.transformToDictList())
-print("\n")
-
-#Exibir todas as localidades :
-#localidades = [item["Localidade"] for item in objeto1.transformToDictList()]
-#print("localidade:\n", localidades)
-
-#Exibir todas as localidades onde a categoria de ameaça é vulnerável
-#localidadesVulneraveis = [item["Localidade"] for item in objeto1.transformToDictList() if item["Categoria de Ameaca"] == "Vulnerável"]
-#print("localidadeVulneraveis:\n", localidadesVulneraveis)
-
-#Para cada coluna identique a quantidade de linhas com dados faltantes, e a média de dados faltantes por coluna
-print(objeto1.dadosFaltantesPorColuna())
-
-
+obj = QualidadeDados()
+obj.listdata()
+#print(obj.transformToDictList())
+#print("\n")
+#print(obj.dadosFaltantesPorColuna())
+#obj.nivelTaxonomico()
+#obj.filtros()
+#obj.verificarCoordenadas()
