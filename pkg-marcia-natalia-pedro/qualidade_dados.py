@@ -157,8 +157,8 @@ class QualidadeDados:
                 print(ex)      
 
 
-obj = QualidadeDados()
-obj.listdata()
+#obj = QualidadeDados()
+#obj.listdata()
 #obj.transformToDictList()
 #print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
 #obj.nivelTaxonomico()
