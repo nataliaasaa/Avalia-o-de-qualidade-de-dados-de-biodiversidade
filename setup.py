@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="qualidade-dados", 
-    version="0.0.1",
+    version="0.0.3",
     author="Marcia, Natalia e Pedro",
     author_email="author@example.com",
     description="A small example package",
