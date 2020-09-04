@@ -2,9 +2,6 @@ from opencage.geocoder import OpenCageGeocode
 from opencage.geocoder import InvalidInputError, RateLimitExceededError, UnknownError
 from pprint import pprint
 
-key = '5b7a26bfcd904e07a49f085037f6d7ba'
-geocoder = OpenCageGeocode(key)
-
 class QualidadeDados:
 
     def __init__(self):
@@ -18,7 +15,7 @@ class QualidadeDados:
         #Cria uma lista de listas
         self.dataLines = [l.rstrip().split(";") for l in self.dataList]
         #Cria uma lista contendo somente o cabeçalho do arquivo
-        self.headLista = self.dataLines[0]  #Lista com os atributos da Head do arquivo
+        self.headLista = self.dataLines[0] 
         #Cria uma lista com os dicionários, cada um representando uma linha do arquivo 
         self.dataDictList = []
 
@@ -55,9 +52,7 @@ class QualidadeDados:
     
 
     #Identificar a quantidade de linhas com dados faltantes para cada coluna, e fazer a média desses dados:
-
-    def dadosFaltantesPorColuna(self):
-        
+    def dadosFaltantesPorColuna(self):        
         dictFaltantes = {} 
 
         for coluna in self.headLista:
@@ -67,18 +62,12 @@ class QualidadeDados:
             #print(len(self.dataDictList))
             dictFaltantes[coluna] = count
 
-        #Dicionários dos items faltantes em cada coluna:
-        #print(dictFaltantes)    
-        
         #Soma todos os valores de items faltantes nas colunas(dictFaltantes.values()): 
         somaItensFalantesPorColuna = sum(dictFaltantes.values())
-        #print("A soma dos itens faltantes: " + str(somaItensFalantesPorColuna))
 
         #somaItensFalantesPorColuna / dividir por len(self.headLista):
         mediaItensFalantesPorColuna = somaItensFalantesPorColuna / len(self.headLista)
-        #print("A médoa dos itens faltantes por coluna: " + str(mediaItensFalantesPorColuna))
-
-        return(mediaItensFalantesPorColuna)    
+        print("A média dos itens faltantes por coluna: " + str(mediaItensFalantesPorColuna))
 
     def nivelTaxonomico(self): #verifica até qual nivel taxonomico a ocorrência foi identificada (0 a 6).
         if self.data is None:
@@ -92,8 +81,7 @@ class QualidadeDados:
                     count = 0
                 else:
                     count += 1
-            print ("Nivel taxonômico da ocorrência", num+1, ": ", count)
-   
+            print ("Nivel taxonômico da ocorrência", num+1, ": ", count)   
 
     def filtros_estados(self): #CRIAR UM DICIONARIO COM A SIGLA E O NUMERO DE OCORRENCIA E AI ENVONTRAR O NUMERO DIGITANDO A SIGLA
         if self.data is None:
@@ -131,6 +119,9 @@ class QualidadeDados:
             print("Nome inexistente")        
 
     def verificarCoordenadas(self): #Verifica se as coordenadas da ocorrência correspondem ao estado indicado. 
+        key = '5b7a26bfcd904e07a49f085037f6d7ba'
+        geocoder = OpenCageGeocode(key)
+        
         if self.data is None:
             self.listdata()
         count = 0
@@ -159,4 +150,4 @@ obj.listdata()
 #obj.filtros_estados()
 #obj.filtros_especie()
 #obj.verificarCoordenadas()
-obj.numTotalIndividuos()
+#obj.numTotalIndividuos()
