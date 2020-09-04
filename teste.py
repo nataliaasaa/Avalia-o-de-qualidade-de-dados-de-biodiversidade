@@ -19,9 +19,6 @@ qualidade_dados.QualidadeDados().filtros_estados()
 #Recebe uma especie e retorna o nivel de ameaça
 qualidade_dados.QualidadeDados().filtros_especie()
 
-#Retorna o numero total de indivíduos em um arquivo
-qualidade_dados.QualidadeDados().numTotalIndividuos()
-
 #Verifica se as coordenadas indicadas correspondem ao estado indicado
 qualidade_dados.QualidadeDados().verificarCoordenadas()
 
