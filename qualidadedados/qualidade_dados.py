@@ -130,13 +130,6 @@ class QualidadeDados:
         else:
             print("Nome inexistente")        
 
-    def numTotalIndividuos(self): #Retorna o número total de indivíduos do arquivo.
-        if self.data is None:
-            self.listdata()
-        
-        individuos = [int(linha[14]) for linha in self.data]
-        print ("Número total de indivíduos no arquivo: ", sum(individuos))
-
     def verificarCoordenadas(self): #Verifica se as coordenadas da ocorrência correspondem ao estado indicado. 
         if self.data is None:
             self.listdata()
@@ -151,18 +144,19 @@ class QualidadeDados:
                     #if coord == linha[26]:
                      #   print ("A coordenada corresponde ao estado.")
                 if coord != linha[26]:
-                    print ("A coordenada da ocorrência", count+1, "não correspode ao estado da ocorrência")
+                    print ("A coordenada da ocorrência", count+1, "não correspode ao estado da ocorrência.")
+                    print ("Estado indicado: ", linha[26], "|  Estado indicado pela coordenada: ", coord)
                                             
             except InvalidInputError as ex:
                 print(ex)      
 
 
-#obj = QualidadeDados()
-#obj.listdata()
+obj = QualidadeDados()
+obj.listdata()
 #obj.transformToDictList()
 #print("A média dos dados faltantes por coluna: " + str(obj.dadosFaltantesPorColuna()))
 #obj.nivelTaxonomico()
 #obj.filtros_estados()
 #obj.filtros_especie()
 #obj.verificarCoordenadas()
-#obj.numTotalIndividuos()
+obj.numTotalIndividuos()

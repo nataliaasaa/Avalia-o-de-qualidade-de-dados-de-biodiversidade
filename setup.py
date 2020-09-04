@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="qualidade-dados", 
-    version="0.0.3",
+    name="qualidadedados", 
+    version="2.0.0",
     author="Marcia, Natalia e Pedro",
     author_email="author@example.com",
     description="A small example package",
